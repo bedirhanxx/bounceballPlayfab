@@ -2926,8 +2926,8 @@ MonoBehaviour:
   coin: 0
   hScore: 0
   oldhScore: 0
-  sizeX: 150
-  sizeY: 150
+  sizeX: 1
+  sizeY: 1
   rbMass: 50
   redC: 0
   blueC: 0

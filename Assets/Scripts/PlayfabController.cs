@@ -80,6 +80,7 @@ public class PlayfabController : MonoBehaviour
     {
         Debug.Log("Congratulations, you made your first successful API call!");
         GetStats();
+        GetStatHS();
         myID = result.PlayFabId;
         loadStage++;
 
@@ -281,12 +282,6 @@ public class PlayfabController : MonoBehaviour
 
             Statistics = new List<StatisticUpdate> {
                new StatisticUpdate {
-                  StatisticName = "hScore", Value = hScore
-               },
-               new StatisticUpdate {
-                  StatisticName = "oldhScore", Value = oldhScore
-               },
-               new StatisticUpdate {
                   StatisticName = "sizeX", Value = sizeX
                },
                new StatisticUpdate {
@@ -314,6 +309,32 @@ public class PlayfabController : MonoBehaviour
            }); ;
     }
 
+
+
+    bool of;
+    public void SetStatsHS()
+    {
+        PlayFabClientAPI.UpdatePlayerStatistics(new UpdatePlayerStatisticsRequest
+        {
+            
+            // hor hs
+            Statistics = new List<StatisticUpdate> {
+               new StatisticUpdate {
+                  StatisticName = "hScore", Value = hScore
+               },
+               new StatisticUpdate {
+                  StatisticName = "oldhScore", Value = oldhScore
+               },
+            }
+        },
+           result => {
+               Debug.Log("User statistics HS Updated");
+           },
+           error => {
+               Debug.LogError(error.GenerateErrorReport());
+           }); ;
+    }
+
     public void GetStats()
     {
         PlayFabClientAPI.GetPlayerStatistics(
@@ -323,7 +344,18 @@ public class PlayfabController : MonoBehaviour
         );
     }
 
-    void OnGetStats(GetPlayerStatisticsResult result)
+
+
+    public void GetStatHS()
+    {
+        PlayFabClientAPI.GetPlayerStatistics(
+           new GetPlayerStatisticsRequest(),
+           OnGetStatsHS,
+           error => Debug.LogError(error.GenerateErrorReport())
+        );
+    }
+
+    void OnGetStatsHS(GetPlayerStatisticsResult result)
     {
         Debug.Log("Received the following Statistics:");
         loadStage++;
@@ -339,6 +371,20 @@ public class PlayfabController : MonoBehaviour
                 case "oldhScore":
                     oldhScore = eachStat.Value;
                     break;
+            }
+        }
+    }
+
+    void OnGetStats(GetPlayerStatisticsResult result)
+    {
+        Debug.Log("Received the following Statistics:");
+        loadStage++;
+        foreach (var eachStat in result.Statistics)
+        {
+            Debug.Log("Statistic (" + eachStat.StatisticName + "): " + eachStat.Value);
+
+            switch (eachStat.StatisticName)
+            {
                 case "sizeX":
                     sizeX = eachStat.Value;
                     break;
@@ -365,11 +411,12 @@ public class PlayfabController : MonoBehaviour
     public bool check;
     private void Update()
     {
-        if (loadStage == 3)
+        if (loadStage >= 3)
         {
             if (!check)
             {
                 LoadScreen.SetActive(false);
+                check = true;
                 Time.timeScale = 1;
             }
         }

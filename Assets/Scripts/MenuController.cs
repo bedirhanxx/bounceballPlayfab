@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
-
+using NaughtyAttributes;
 public class MenuController : MonoBehaviour
 {
     public static MenuController MC;
@@ -64,29 +64,51 @@ public class MenuController : MonoBehaviour
 
     public void setHsCore()
     {
-        StartCoroutine(setSCores());
+        //StartCoroutine(setSCores());
+        GetStats();
     }
 
-
-    IEnumerator setSCores()
+    /// <summary>
+    ///  todo statlar yapilacakl
+    /// </summary>
+    [Button("GetScores")]
+    public void GetStats()
     {
-        OpenGameOverPanel();
-        PlayfabController.PFC.GetStats();
+        
+        PlayfabController.PFC.GetStatHS();
         oldScore = PlayfabController.PFC.hScore;
+
+        Debug.Log(Ball.GetComponent<Ball>().traveledDistance + " /  " + PlayfabController.PFC.hScore);
+
 
         if (Ball.GetComponent<Ball>().traveledDistance >= PlayfabController.PFC.hScore)
         {
-            yield return new WaitForSeconds(0.5f);
             highScore = Ball.GetComponent<Ball>().traveledDistance;
-            PlayfabController.PFC.hScore = highScore;
+            SetStats();
+
         }
         else
         {
             oldScore = PlayfabController.PFC.hScore;
         }
-        PlayfabController.PFC.SetStats();
 
+
+        OpenGameOverPanel();
     }
+
+
+    [Button("SetStats")]
+    public void SetStats()
+    {
+
+        PlayfabController.PFC.hScore = highScore;
+        PlayfabController.PFC.SetStatsHS();
+        
+
+        Debug.Log("/ after " + Ball.GetComponent<Ball>().traveledDistance + " /  " + PlayfabController.PFC.hScore);
+        PlayfabController.PFC.GetStatHS();
+    }
+
 
     public void reloadGame()
     {

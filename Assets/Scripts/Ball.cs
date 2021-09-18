@@ -8,8 +8,7 @@ public class Ball : MonoBehaviour
     public int force_pw;
     public int force_pw_side;
     public float maxFollow = 6f;
-    private float nextActionTime = 0.0f;
-    public float period = 0.1f;
+    
     public int traveledDistance;
     public bool enabled;
     public bool SpawnCoin;
@@ -17,6 +16,12 @@ public class Ball : MonoBehaviour
     public GameObject backGroundImage;
     public GameObject CoinHolder;
     public GameObject Level;
+
+
+
+    private float time = 0.0f;
+    public float interpolationPeriod = 0.1f;
+
 
     void Start()
     {
@@ -123,10 +128,12 @@ public class Ball : MonoBehaviour
             float offset = 1f;
             backGroundImage.transform.DOMove(backGroundImage.transform.position - backGroundImage.transform.up * offset, 0.5f);
             CoinHolder.transform.DOMove(CoinHolder.transform.position - CoinHolder.transform.up * offset, 0.5f);
-            if (Time.time > nextActionTime)
+            time += Time.deltaTime;
+
+            if (time >= interpolationPeriod)
             {
-                nextActionTime += period;
-                traveledDistance += 1;                
+                time = 0.0f;
+                traveledDistance += 1;
             }
             if (!SpawnCoin)
             {
